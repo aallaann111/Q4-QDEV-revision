@@ -210,15 +210,59 @@ En résumé, la solution avec le patron de conception Stratégie offre une meill
 
 # Question 5 :
 
-Voici une implémentation simplifiée de la solution avec la classe `DataCompression`, l'interface `DataCompressionStrategy`, et trois classes concrètes : `ImageCompressionStrategy`, `VideoCompressionStrategy`, et `AudioCompressionStrategy`.
+Voici l'implémentation de la solution avec le patron de conception Stratégie, en ajoutant la classe `DataCompressionStrategy` ainsi que les classes concrètes `ImageCompressionStrategy`, `AudioCompressionStrategy`, et `VideoCompressionStrategy` :
 
 ```java
-// Interface DataCompressionStrategy
+// Nouvelle interface DataCompressionStrategy
 public interface DataCompressionStrategy {
-    String processData(Data data);
+    String compress(Data data);
 }
 
-// Classe DataCompression
+// Implémentation de la stratégie pour la compression d'image
+public class ImageCompressionStrategy implements DataCompressionStrategy {
+    private float quality = 0.5f;
+
+    @Override
+    public String compress(Data data) {
+        if (data instanceof ImageData) {
+            ImageData imageData = (ImageData) data;
+            // Logique de compression d'image
+            // ...
+            return "Compressed image: " + imageData.getFile().getName();
+        }
+        return "";
+    }
+}
+
+// Implémentation de la stratégie pour la compression audio
+public class AudioCompressionStrategy implements DataCompressionStrategy {
+    @Override
+    public String compress(Data data) {
+        if (data instanceof AudioData) {
+            AudioData audioData = (AudioData) data;
+            // Logique de compression audio
+            // ...
+            return "Compressed audio: " + audioData.getFile().getName();
+        }
+        return "";
+    }
+}
+
+// Implémentation de la stratégie pour la compression vidéo
+public class VideoCompressionStrategy implements DataCompressionStrategy {
+    @Override
+    public String compress(Data data) {
+        if (data instanceof VideoData) {
+            VideoData videoData = (VideoData) data;
+            // Logique de compression vidéo
+            // ...
+            return "Compressed video: " + videoData.getFile().getName();
+        }
+        return "";
+    }
+}
+
+// Modification de la classe DataCompression pour utiliser la stratégie
 public class DataCompression {
     private DataCompressionStrategy compressionStrategy;
 
@@ -227,74 +271,61 @@ public class DataCompression {
     }
 
     public String compressData(Data data) {
-        return compressionStrategy.processData(data);
+        return compressionStrategy.compress(data);
     }
-}
 
-// Classe ImageCompressionStrategy
-public class ImageCompressionStrategy implements DataCompressionStrategy {
-    @Override
-    public String processData(Data data) {
-        // Implémentation de la compression d'image
-        // ...
-        return "Compressed Image: " + data.getFile().getName();
-    }
+    // Autres méthodes...
 }
-
-// Classe VideoCompressionStrategy
-public class VideoCompressionStrategy implements DataCompressionStrategy {
-    @Override
-    public String processData(Data data) {
-        // Implémentation de la compression vidéo
-        // ...
-        return "Compressed Video: " + data.getFile().getName();
-    }
-}
-
-// Classe AudioCompressionStrategy
-public class AudioCompressionStrategy implements DataCompressionStrategy {
-    @Override
-    public String processData(Data data) {
-        // Implémentation de la compression audio
-        // ...
-        return "Compressed Audio: " + data.getFile().getName();
-    }
 ```
 
-Exemple d'utilisation de ces classes dans votre application :
+Dans le fichier `App`, vous pouvez maintenant utiliser ces classes de la manière suivante :
 
 ```java
 public class App {
-    public static void main(String[] args) {
-        // Création d'instances de DataCompressionStrategy
-        DataCompressionStrategy imageStrategy = new ImageCompressionStrategy();
-        DataCompressionStrategy videoStrategy = new VideoCompressionStrategy();
-        DataCompressionStrategy audioStrategy = new AudioCompressionStrategy();
+    public static void main(String[] args) throws IOException {
+        // Vider les dossiers avec les contenus compressés
+        File compressionImageFolder = new File("./data/compressed/jpg");
+        File compressionAudioFolder = new File("./data/compressed/wav");
+        File compressionVideoFolder = new File("./data/compressed/mp4");
+        FileWriter.clearFolder(compressionImageFolder);
+        FileWriter.clearFolder(compressionAudioFolder);
+        FileWriter.clearFolder(compressionVideoFolder);
 
-        // Utilisation de DataCompression avec différentes stratégies
-        DataCompression imageCompression = new DataCompression(imageStrategy);
-        DataCompression videoCompression = new DataCompression(videoStrategy);
-        DataCompression audioCompression = new DataCompression(audioStrategy);
+        // Création des données à traiter
+        ArrayList<Data> dataList = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) {
+            dataList.add(new ImageData(new File("./data/jpg/image" + i + ".jpg")));
+            dataList.add(new AudioData(new File("./data/wav/audio" + i + ".wav")));
+            dataList.add(new VideoData(new File("./data/mp4/video" + i + ".mp4")));
+        }
 
-        // Création de données à traiter
-        Data imageData = new ImageData(new File("./data/jpg/image1.jpg"));
-        Data videoData = new VideoData(new File("./data/mp4/video1.mp4"));
-        Data audioData = new AudioData(new File("./data/wav/audio1.wav"));
+        // Création du DataCompression avec la stratégie appropriée
+        DataCompressionStrategy imageCompressionStrategy = new ImageCompressionStrategy();
+        DataCompressionStrategy audioCompressionStrategy = new AudioCompressionStrategy();
+        DataCompressionStrategy videoCompressionStrategy = new VideoCompressionStrategy();
 
-        // Compression des données avec les stratégies appropriées
-        String compressedImageResult = imageCompression.compressData(imageData);
-        String compressedVideoResult = videoCompression.compressData(videoData);
-        String compressedAudioResult = audioCompression.compressData(audioData);
+        DataCompression imageCompression = new DataCompression(imageCompressionStrategy);
+        DataCompression audioCompression = new DataCompression(audioCompressionStrategy);
+        DataCompression videoCompression = new DataCompression(videoCompressionStrategy);
 
-        // Affichage des résultats
-        System.out.println(compressedImageResult);
-        System.out.println(compressedVideoResult);
-        System.out.println(compressedAudioResult);
+        // Traitement des données avec la stratégie de traitement appropriée
+        for (Data data : dataList) {
+            String result = "";
+            if (data instanceof ImageData) {
+                result = imageCompression.compressData(data);
+            } else if (data instanceof AudioData) {
+                result = audioCompression.compressData(data);
+            } else if (data instanceof VideoData) {
+                result = videoCompression.compressData(data);
+            }
+            // Vérification du résultat du traitement
+            System.out.println("Résultat du traitement : " + result);
+        }
     }
 }
 ```
 
-Cette implémentation utilise le patron de conception Stratégie pour permettre une extensibilité facile en ajoutant de nouveaux types de compression sans modifier la classe `DataCompression`. Chaque stratégie est responsable de la compression d'un type spécifique de données.
+Cette implémentation utilise la flexibilité du patron de conception Stratégie pour déléguer la responsabilité de la compression à des classes spécialisées, respectant ainsi les principes SOLID.
 
 
 
