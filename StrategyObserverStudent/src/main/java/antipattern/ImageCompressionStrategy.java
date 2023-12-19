@@ -17,33 +17,36 @@ public class ImageCompressionStrategy implements DataCompressionStrategy {
 
     @Override
     public String compress(Data data) {
-        String result = "empty";
-        try {
-            // Lecture de l'image d'entrée
-            BufferedImage inputImage = ImageIO.read(data.getFile());
-            // Récupération de l'instance de l'encodeur JPEG
-            ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
-            // Définition des paramètres d'encodage
-            ImageWriteParam params = new JPEGImageWriteParam(null);
-            params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            params.setCompressionQuality(quality);
-            // Définition du flux de sortie
-            File output = new File("./data/compressed/jpg/c-" + data.getFile().getName());
-            ImageOutputStream ios = new FileImageOutputStream(output);
-            writer.setOutput(ios);
-            // Encodage de l'image
-            writer.write(null, new javax.imageio.IIOImage(inputImage, null, null), params);
-            // Fermeture du flux de sortie
-            ios.close();
-            writer.dispose();
+        if (data instanceof ImageData) {
+            String result = "empty";
+            try {
+                // Lecture de l'image d'entrée
+                BufferedImage inputImage = ImageIO.read(data.getFile());
+                // Récupération de l'instance de l'encodeur JPEG
+                ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
+                // Définition des paramètres d'encodage
+                ImageWriteParam params = new JPEGImageWriteParam(null);
+                params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                params.setCompressionQuality(quality);
+                // Définition du flux de sortie
+                File output = new File("./data/compressed/jpg/c-" + data.getFile().getName());
+                ImageOutputStream ios = new FileImageOutputStream(output);
+                writer.setOutput(ios);
+                // Encodage de l'image
+                writer.write(null, new javax.imageio.IIOImage(inputImage, null, null), params);
+                // Fermeture du flux de sortie
+                ios.close();
+                writer.dispose();
 
-            result = output.getAbsolutePath();
-        } catch (IOException e) {
-            System.out.println("Error while compressing image file " + data.getFile().getName());
+                result = output.getAbsolutePath();
+            } catch (IOException e) {
+                System.out.println("Error while compressing image file " + data.getFile().getName());
+            }
+
+            updateImage(result);
+            return result;
         }
-
-        updateImage(result);
-        return result;
+        return "";
     }
 
     public void updateImage(String fileName) {

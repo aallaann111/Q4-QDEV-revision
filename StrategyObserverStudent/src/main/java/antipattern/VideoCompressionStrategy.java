@@ -10,36 +10,39 @@ import java.time.format.DateTimeFormatter;
 public class VideoCompressionStrategy implements DataCompressionStrategy {
     @Override
     public String compress(Data data) {
-        String result = "./data/compressed/mp4/c-" + data.getFile().getName();
-        try {
-            FileInputStream inputStream = new FileInputStream(data.getFile().getAbsolutePath());
+        if (data instanceof VideoData) {
+            String result = "./data/compressed/mp4/c-" + data.getFile().getName();
+            try {
+                FileInputStream inputStream = new FileInputStream(data.getFile().getAbsolutePath());
 
-            FileOutputStream outputStream = new FileOutputStream(result);
-
-
-            byte[] buffer = new byte[4096];
-            int length;
-
-            while (true) {
-
-                if (!((length = inputStream.read(buffer)) > 0)) break;
-                outputStream.write(buffer, 0, length);
+                FileOutputStream outputStream = new FileOutputStream(result);
 
 
+                byte[] buffer = new byte[4096];
+                int length;
+
+                while (true) {
+
+                    if (!((length = inputStream.read(buffer)) > 0)) break;
+                    outputStream.write(buffer, 0, length);
+
+
+                }
+
+
+                inputStream.close();
+
+                outputStream.close();
+
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-
-
-            inputStream.close();
-
-            outputStream.close();
-
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            updateVideo(result);
+            return result;
         }
-        updateVideo(result);
-        return result;
+        return "";
     }
 
     public void updateVideo(String fileName) {
