@@ -598,6 +598,61 @@ Notez que l'utilisation du patron de conception Observateur permet à un objet (
 
 ## Question 11 :
 
+Les avantages de la solution avec le patron de conception Observateur par rapport à la solution antipattern sont les suivants :
+
+1. **Séparation des préoccupations (Separation of Concerns) :** La solution avec le patron de conception Observateur permet de séparer les mécanismes de compression des données des mécanismes d'observation. Chaque observateur est responsable de traiter les informations spécifiques à son type de données, assurant une meilleure modularité et un meilleur respect du principe de séparation des préoccupations (SOLID).
+
+2. **Extension facile :** Avec le patron Observateur, l'ajout d'un nouvel observateur pour un nouveau type de données se fait sans modifier la classe principale (`DataCompression`). Cela rend le système plus extensible, conforme au principe OCP (Open/Closed Principle) puisqu'il est ouvert à l'extension mais fermé à la modification.
+
+3. **Réduction des dépendances :** La solution Observateur réduit les dépendances entre la classe principale et les observateurs. Chaque observateur est couplé uniquement à l'interface commune (`Observer`), ce qui favorise la flexibilité et la réutilisabilité du code.
+
+4. **Facilitation des tests unitaires :** En utilisant le patron Observateur, il devient plus facile de tester chaque observateur indépendamment des autres. Cela facilite la création de tests unitaires spécifiques à chaque type d'observateur, améliorant ainsi la qualité et la robustesse du code.
+
+5. **Maintenabilité améliorée :** En séparant les responsabilités, la solution Observateur rend le code plus lisible et plus facile à maintenir. Les modifications ou extensions futures se font de manière localisée, minimisant ainsi le risque d'introduire des erreurs dans des parties du code qui ne devraient pas être affectées.
+
+En résumé, la solution avec le patron de conception Observateur offre une meilleure conception logicielle en respectant davantage les principes SOLID, en favorisant la modularité, l'extensibilité et la maintenabilité du système.
+
+
+
+## Question 12 :
+
+Bien sûr, voici comment vous pouvez définir l'interface `DataObserver` avec une méthode `update()`, ainsi que les trois classes concrètes `ImageObserver`, `VideoObserver`, et `AudioObserver` qui implémentent cette interface :
+
+```java
+// Interface DataObserver
+public interface DataObserver {
+    void update(String fileName);
+}
+
+// Classe concrète ImageObserver
+public class ImageObserver implements DataObserver {
+    @Override
+    public void update(String fileName) {
+        // Logique spécifique à l'observation des images
+        System.out.println("Observation des images : Fichier compressé - " + fileName);
+    }
+}
+
+// Classe concrète VideoObserver
+public class VideoObserver implements DataObserver {
+    @Override
+    public void update(String fileName) {
+        // Logique spécifique à l'observation des vidéos
+        System.out.println("Observation des vidéos : Fichier compressé - " + fileName);
+    }
+}
+
+// Classe concrète AudioObserver
+public class AudioObserver implements DataObserver {
+    @Override
+    public void update(String fileName) {
+        // Logique spécifique à l'observation des fichiers audio
+        System.out.println("Observation des fichiers audio : Fichier compressé - " + fileName);
+    }
+```
+
+Maintenant, chaque classe concrète (observateur) implémente l'interface `DataObserver` et fournit sa propre logique pour la méthode `update()`, décrivant comment elle réagit lorsqu'une nouvelle donnée est compressée. Cela suit le principe d'ouverture/fermeture (OCP) en permettant d'ajouter de nouveaux observateurs sans modifier le code existant.
+
 
 
 
