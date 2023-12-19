@@ -15,17 +15,15 @@ import java.time.format.DateTimeFormatter;
 public class DataCompression {
 
     private float quality = 0.5f;
+    private DataCompressionStrategy compressionStrategy;
+
+    public DataCompression(DataCompressionStrategy compressionStrategy) {
+        this.compressionStrategy = compressionStrategy;
+    }
 
 
     public String compressData(Data data) {
-        if (data instanceof ImageData) {
-            return compressImageData((ImageData) data);
-        } else if (data instanceof AudioData) {
-            return compressAudioData((AudioData) data);
-        } else if (data instanceof VideoData) {
-            return compressVideoData((VideoData) data);
-        }
-        return "";
+        return compressionStrategy.compress(data);
     }
 
     private String compressVideoData(VideoData data) {

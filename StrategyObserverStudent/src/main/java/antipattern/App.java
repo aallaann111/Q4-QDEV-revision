@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class App {
-
-
     public static void main(String[] args) throws IOException {
         // Vider les dossiers avec les contenus compressés
         File compressionImageFolder = new File("./data/compressed/jpg");
@@ -17,38 +15,36 @@ public class App {
         FileWriter.clearFolder(compressionAudioFolder);
         FileWriter.clearFolder(compressionVideoFolder);
 
-
         // Création des données à traiter
-        ArrayList<ImageData> imageList = new ArrayList<>();
-        ArrayList<AudioData> audioList = new ArrayList<>();
-        ArrayList<VideoData> videoList = new ArrayList<>();
-
+        ArrayList<Data> dataList = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
-            imageList.add(new ImageData(new File("./data/jpg/image" + i + ".jpg")));
-            audioList.add(new AudioData(new File("./data/wav/audio" + i + ".wav")));
-            videoList.add(new VideoData(new File("./data/mp4/video" + i + ".mp4")));
+            dataList.add(new ImageData(new File("./data/jpg/image" + i + ".jpg")));
+            dataList.add(new AudioData(new File("./data/wav/audio" + i + ".wav")));
+            dataList.add(new VideoData(new File("./data/mp4/video" + i + ".mp4")));
         }
-        // Création du DataCompression
-        DataCompression dataCompression = new DataCompression();
 
+        // Création du DataCompression avec la stratégie appropriée
+        DataCompressionStrategy imageCompressionStrategy = new ImageCompressionStrategy();
+        DataCompressionStrategy audioCompressionStrategy = new AudioCompressionStrategy();
+        DataCompressionStrategy videoCompressionStrategy = new VideoCompressionStrategy();
+
+        DataCompression imageCompression = new DataCompression(imageCompressionStrategy);
+        DataCompression audioCompression = new DataCompression(audioCompressionStrategy);
+        DataCompression videoCompression = new DataCompression(videoCompressionStrategy);
 
         // Traitement des données avec la stratégie de traitement appropriée
-        String imageResult, soundResult;
-        String videoResult= "";
-
-        for (int i = 0; i < 10; i++) {
-            imageResult = dataCompression.compressData(imageList.get(i));
-            soundResult = dataCompression.compressData(audioList.get(i));
-            if (i < 5)
-                videoResult = dataCompression.compressData(videoList.get(i));
+        for (Data data : dataList) {
+            String result = "";
+            if (data instanceof ImageData) {
+                result = imageCompression.compressData(data);
+            } else if (data instanceof AudioData) {
+                result = audioCompression.compressData(data);
+            } else if (data instanceof VideoData) {
+                result = videoCompression.compressData(data);
+            }
             // Vérification du résultat du traitement
-            System.out.println("Résultat du traitement de l'image : " + imageResult);
-            System.out.println("Résultat du traitement du son : " + soundResult);
-            if (i < 5)
-                System.out.println("Résultat du traitement de la vidéo : " + videoResult);
-
+            System.out.println("Résultat du traitement : " + result);
         }
-
     }
 }
 
