@@ -337,8 +337,52 @@ Cette implémentation utilise la flexibilité du patron de conception Stratégie
 
 # Question 6 :
 
+Pour répondre à la question 6, nous allons ajouter une méthode `setDataCompressionStrategy` à la classe `DataCompression` qui prendra en charge l'instanciation de la stratégie appropriée en fonction du type de données. Voici comment vous pouvez le faire :
+
+```java
+public class DataCompression {
+    private DataCompressionStrategy compressionStrategy;
+
+    public void setDataCompressionStrategy(DataCompressionStrategy strategy) {
+        this.compressionStrategy = strategy;
+    }
+
+    public String compressData(Data data) {
+        if (compressionStrategy == null) {
+            throw new IllegalStateException("DataCompressionStrategy not set. Please call setDataCompressionStrategy method.");
+        }
+
+        return compressionStrategy.compress(data);
+    }
+
+    // Autres méthodes...
+}
+```
+
+Avec cette modification, vous pouvez maintenant définir la stratégie appropriée en appelant la méthode `setDataCompressionStrategy` avant d'appeler la méthode `compressData`. Par exemple :
+
+```java
+// ...
+
+// Création du DataCompression
+DataCompression dataCompression = new DataCompression();
+
+// Définir la stratégie appropriée en fonction du type de données
+dataCompression.setDataCompressionStrategy(new ImageCompressionStrategy());
+
+// Traitement des données avec la stratégie de traitement appropriée
+for (Data data : dataList) {
+    String result = dataCompression.compressData(data);
+    // Vérification du résultat du traitement
+    System.out.println("Résultat du traitement : " + result);
+}
+```
+
+Cela permet de changer dynamiquement la stratégie de compression en fonction du type de données sans modifier la classe `DataCompression`.
 
 
+
+# Question 7 :
 
 
 
