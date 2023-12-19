@@ -24,29 +24,27 @@ public class App {
         }
 
         // Création du DataCompression avec la stratégie appropriée
-        DataCompressionStrategy imageCompressionStrategy = new ImageCompressionStrategy();
-        DataCompressionStrategy audioCompressionStrategy = new AudioCompressionStrategy();
-        DataCompressionStrategy videoCompressionStrategy = new VideoCompressionStrategy();
+        DataCompression dataCompression = new DataCompression();
 
-        DataCompression imageCompression = new DataCompression(imageCompressionStrategy);
-        DataCompression audioCompression = new DataCompression(audioCompressionStrategy);
-        DataCompression videoCompression = new DataCompression(videoCompressionStrategy);
-
-        // Traitement des données avec la stratégie de traitement appropriée
+        // Définir la stratégie appropriée en fonction du type de données
         for (Data data : dataList) {
-            String result = "";
             if (data instanceof ImageData) {
-                result = imageCompression.compressData(data);
+                dataCompression.setDataCompressionStrategy(new ImageCompressionStrategy());
             } else if (data instanceof AudioData) {
-                result = audioCompression.compressData(data);
+                dataCompression.setDataCompressionStrategy(new AudioCompressionStrategy());
             } else if (data instanceof VideoData) {
-                result = videoCompression.compressData(data);
+                dataCompression.setDataCompressionStrategy(new VideoCompressionStrategy());
             }
+
+            // Traitement des données avec la stratégie de traitement appropriée
+            String result = dataCompression.compressData(data);
             // Vérification du résultat du traitement
             System.out.println("Résultat du traitement : " + result);
         }
     }
 }
+
+
 
 // Définition de la classe DataCompression
 

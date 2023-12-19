@@ -1,4 +1,6 @@
-# Question 1 :
+# 1 Patron Stratégie :
+
+## Question 1 :
 
 Le code fourni représente une implémentation antipattern qui viole les principes SOLID, en particulier le principe de responsabilité unique (Single Responsibility Principle - SRP) et le principe d'ouverture/fermeture (Open/Closed Principle - OCP). La classe `DataCompression` contient toutes les fonctions nécessaires pour compresser différents types de données (image, audio, vidéo), ce qui la rend peu évolutive et difficile à maintenir.
 
@@ -73,7 +75,7 @@ Cela permet d'atteindre une meilleure séparation des préoccupations et une plu
 
 
 
-# Question 2 :
+## Question 2 :
 
 Bien sûr, je peux vous donner un exemple de diagramme de classes en PlantUML qui utilise le patron de conception Stratégie. Le patron de conception Stratégie permet de définir une famille d'algorithmes, encapsuler chacun d'eux et les rendre interchangeables. Les clients peuvent alors choisir l'algorithme approprié sans avoir à changer leur code.
 
@@ -119,7 +121,7 @@ Dans cet exemple, la classe `Context` a une référence à une interface appelé
 
 
 
-# Question 3 :
+## Question 3 :
 
 La solution avec le patron de conception Stratégie résout les problèmes de la solution antipattern et respecte les principes SOLID, en particulier le Single Responsibility Principle (SRP) et l'Open/Closed Principle (OCP).
 
@@ -188,7 +190,7 @@ En utilisant le patron de conception Stratégie, la solution devient plus flexib
 
 
 
-# Question 4 :
+## Question 4 :
 
 La solution avec le patron de conception Stratégie présente plusieurs avantages par rapport à la solution antipattern. Voici quelques-uns des principaux avantages :
 
@@ -214,7 +216,7 @@ En résumé, la solution avec le patron de conception Stratégie offre une meill
 
 
 
-# Question 5 :
+## Question 5 :
 
 Voici l'implémentation de la solution avec le patron de conception Stratégie, en ajoutant la classe `DataCompressionStrategy` ainsi que les classes concrètes `ImageCompressionStrategy`, `AudioCompressionStrategy`, et `VideoCompressionStrategy` :
 
@@ -335,7 +337,7 @@ Cette implémentation utilise la flexibilité du patron de conception Stratégie
 
 
 
-# Question 6 :
+## Question 6 :
 
 Pour répondre à la question 6, nous allons ajouter une méthode `setDataCompressionStrategy` à la classe `DataCompression` qui prendra en charge l'instanciation de la stratégie appropriée en fonction du type de données. Voici comment vous pouvez le faire :
 
@@ -382,9 +384,102 @@ Cela permet de changer dynamiquement la stratégie de compression en fonction du
 
 
 
-# Question 7 :
+## Question 7 :
+
+Pour tester l'implémentation avec l'application principale fournie avec la solution antipattern, vous pouvez adapter le code de l'application principale pour utiliser la nouvelle implémentation avec le patron de conception Stratégie. Voici comment vous pouvez le faire :
+
+```java
+public class App {
+    public static void main(String[] args) throws IOException {
+        // Vider les dossiers avec les contenus compressés
+        File compressionImageFolder = new File("./data/compressed/jpg");
+        File compressionAudioFolder = new File("./data/compressed/wav");
+        File compressionVideoFolder = new File("./data/compressed/mp4");
+        FileWriter.clearFolder(compressionImageFolder);
+        FileWriter.clearFolder(compressionAudioFolder);
+        FileWriter.clearFolder(compressionVideoFolder);
+
+        // Création des données à traiter
+        ArrayList<Data> dataList = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) {
+            dataList.add(new ImageData(new File("./data/jpg/image" + i + ".jpg")));
+            dataList.add(new AudioData(new File("./data/wav/audio" + i + ".wav")));
+            dataList.add(new VideoData(new File("./data/mp4/video" + i + ".mp4")));
+        }
+
+        // Création du DataCompression avec la stratégie appropriée
+        DataCompression dataCompression = new DataCompression();
+
+        // Définir la stratégie appropriée en fonction du type de données
+        for (Data data : dataList) {
+            if (data instanceof ImageData) {
+                dataCompression.setDataCompressionStrategy(new ImageCompressionStrategy());
+            } else if (data instanceof AudioData) {
+                dataCompression.setDataCompressionStrategy(new AudioCompressionStrategy());
+            } else if (data instanceof VideoData) {
+                dataCompression.setDataCompressionStrategy(new VideoCompressionStrategy());
+            }
+
+            // Traitement des données avec la stratégie de traitement appropriée
+            String result = dataCompression.compressData(data);
+            // Vérification du résultat du traitement
+            System.out.println("Résultat du traitement : " + result);
+        }
+    }
+}
+```
+
+Cette modification vous permet de tester l'implémentation avec le patron de conception Stratégie en utilisant le même jeu de données que l'application principale de la solution antipattern. Assurez-vous que toutes les classes et interfaces nécessaires sont importées correctement. Vous devriez observer que le résultat du traitement est correctement affiché en fonction du type de données et de la stratégie de compression utilisée.
+
+
+
+## Question 8 :
+
+Une extension possible pour l'implémentation du pattern Stratégie pourrait être l'introduction d'une gestion plus dynamique des stratégies. Actuellement, dans l'implémentation fournie, la stratégie est définie de manière statique dans la classe `App` en fonction du type de données. Une extension intéressante pourrait permettre de configurer les stratégies de compression de manière plus flexible, peut-être en utilisant un mécanisme de configuration externe.
+
+Voici une idée d'extension :
+
+1. **Configuration externe des stratégies :** Utiliser un fichier de configuration externe (par exemple, un fichier JSON) pour spécifier quelles stratégies de compression doivent être utilisées pour chaque type de données.
+
+2. **Chargement dynamique des stratégies :** Ajouter un mécanisme qui charge dynamiquement les stratégies à partir de la configuration externe. Cela peut être fait en utilisant la réflexion (reflection) pour créer les instances des classes de stratégie basées sur les informations de configuration.
+
+3. **Flexibilité des stratégies :** Permettre à l'application de changer dynamiquement les stratégies pendant l'exécution. Par exemple, en fonction de certaines conditions métier ou de la charge de travail, l'application pourrait basculer entre différentes stratégies de compression.
+
+Voici un exemple conceptuel de ce à quoi cela pourrait ressembler :
+
+```java
+// Extrait de la classe App
+public class App {
+    public static void main(String[] args) throws IOException {
+        // ...
+
+        // Charger les stratégies à partir d'un fichier de configuration externe
+        StrategyConfigLoader configLoader = new StrategyConfigLoader("strategies.json");
+        Map<Class<? extends Data>, DataCompressionStrategy> strategyMap = configLoader.loadStrategies();
+
+        // Création du DataCompression avec les stratégies chargées
+        DataCompression dataCompression = new DataCompression();
+
+        // Définir les stratégies appropriées en fonction du type de données
+        for (Data data : dataList) {
+            // Utiliser les stratégies chargées ou une stratégie par défaut si non spécifiée
+            DataCompressionStrategy strategy = strategyMap.getOrDefault(data.getClass(), new DefaultCompressionStrategy());
+            dataCompression.setDataCompressionStrategy(strategy);
+
+            // Traitement des données avec la stratégie de traitement appropriée
+            String result = dataCompression.compressData(data);
+            // Vérification du résultat du traitement
+            System.out.println("Résultat du traitement : " + result);
+        }
+    }
+}
+```
+
+Cette extension permettrait une plus grande flexibilité dans la configuration et l'utilisation des stratégies de compression, facilitant ainsi l'ajout, la modification ou la suppression de stratégies sans modifier directement le code source de l'application.
 
 
 
 
+# 2 Patron Observateur : 
 
+## Question 9 :

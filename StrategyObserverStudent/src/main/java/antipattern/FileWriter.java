@@ -6,15 +6,14 @@ import java.io.IOException;
 
 public class FileWriter {
     public static void clearFolder(File folder) {
-
-        File[] files = folder.listFiles();
-
-        for (File file : files) {
-
-            file.delete();
-
+        if (folder != null) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    file.delete();
+                }
+            }
         }
-
     }
 
     public static void writeToFile(String fileName, String content) {

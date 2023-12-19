@@ -17,7 +17,7 @@ public class DataCompression {
     private float quality = 0.5f;
     private DataCompressionStrategy compressionStrategy;
 
-    public DataCompression(DataCompressionStrategy compressionStrategy) {
+    public DataCompression() {
         this.compressionStrategy = compressionStrategy;
     }
 
