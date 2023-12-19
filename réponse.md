@@ -52,6 +52,9 @@ DataCompression --> VideoData
 @enduml
 ```
 
+![uml1](uml/1.png)
+
+
 Problèmes avec la solution antipattern en termes de principes SOLID :
 
 1. **Violation du SRP (Single Responsibility Principle):** La classe `DataCompression` a plusieurs responsabilités, notamment la compression de données et la gestion des observations (updateImage, updateAudio, updateVideo). Cela rend la classe difficile à comprendre, à maintenir et à étendre.
@@ -110,6 +113,9 @@ Strategy <|.. ConcreteStrategyB
 ```
 
 Dans cet exemple, la classe `Context` a une référence à une interface appelée `Strategy`. Les classes concrètes `ConcreteStrategyA` et `ConcreteStrategyB` implémentent cette interface. Le client peut choisir une stratégie spécifique en utilisant la méthode `setStrategy`, et l'exécution de la stratégie est réalisée par la méthode `executeStrategy` de la classe `Context`.
+
+![uml1](uml/2.png)
+
 
 
 
