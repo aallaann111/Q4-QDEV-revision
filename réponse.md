@@ -116,7 +116,7 @@ Strategy <|.. ConcreteStrategyB
 
 Dans cet exemple, la classe `Context` a une référence à une interface appelée `Strategy`. Les classes concrètes `ConcreteStrategyA` et `ConcreteStrategyB` implémentent cette interface. Le client peut choisir une stratégie spécifique en utilisant la méthode `setStrategy`, et l'exécution de la stratégie est réalisée par la méthode `executeStrategy` de la classe `Context`.
 
-![uml1](uml/2.png)
+![uml2](uml/2.png)
 
 
 
@@ -483,3 +483,123 @@ Cette extension permettrait une plus grande flexibilité dans la configuration e
 # 2 Patron Observateur : 
 
 ## Question 9 :
+
+Pour répondre à la question 9, vous pouvez utiliser le code PlantUML suivant pour représenter le diagramme de classes de la solution antipattern. Le diagramme montre les relations entre les classes `DataCompression`, `ImageObserver`, `VideoObserver`, `SoundObserver`, `ImageData`, `VideoData`, et `AudioData`.
+
+```plantuml
+@startuml
+class DataCompression {
+    + compressData(data: Data): String
+    + updateImage(fileName: String): void
+    + updateAudio(fileName: String): void
+    + updateVideo(fileName: String): void
+}
+
+interface Observer {
+    + update(fileName: String): void
+}
+
+class ImageObserver {
+    + update(fileName: String): void
+}
+
+class VideoObserver {
+    + update(fileName: String): void
+}
+
+class SoundObserver {
+    + update(fileName: String): void
+}
+
+class Data {
+    - file: File
+    + getFile(): File
+}
+
+class ImageData {
+}
+
+class VideoData {
+}
+
+class AudioData {
+}
+
+Data <|-- ImageData
+Data <|-- VideoData
+Data <|-- AudioData
+
+Observer <|.. ImageObserver
+Observer <|.. VideoObserver
+Observer <|.. SoundObserver
+
+DataCompression *-- Observer : observers
+
+@enduml
+```
+
+![uml3](uml/3.png)
+
+Problème avec la solution antipattern en termes de principes SOLID :
+
+Le problème principal en termes de principes SOLID est la violation du principe de l'ouverture/fermeture (OCP) et du principe de substitution de Liskov (LSP). Actuellement, la classe `DataCompression` est ouverte à la modification à chaque fois qu'un nouveau type de données est introduit. Cela signifie que pour étendre le système avec un nouveau type de données, vous devez modifier la classe existante, ce qui peut conduire à des erreurs et à des difficultés de maintenance. L'utilisation de blocs conditionnels (`if` statements) pour déterminer le type de donnée à traiter est une indication de cette violation.
+
+
+
+## Question 10 :
+
+Bien sûr ! Voici un exemple de diagramme de classes en PlantUML qui utilise le patron de conception Observateur :
+
+```plantuml
+@startuml
+
+class Sujet {
+  + ajouterObservateur(observateur: Observateur)
+  + supprimerObservateur(observateur: Observateur)
+  + notifierObservateurs()
+}
+
+interface Observateur {
+  {abstract} + actualiser()
+}
+
+class ObservateurConcretA implements Observateur {
+  + actualiser()
+}
+
+class ObservateurConcretB implements Observateur {
+  + actualiser()
+}
+
+class Client {
+  + main()
+}
+
+Sujet --|> Observateur
+Sujet *- ObservateurConcretA
+Sujet *- ObservateurConcretB
+
+Client --> Sujet
+Client --> ObservateurConcretA
+Client --> ObservateurConcretB
+
+@enduml
+```
+
+![uml4](uml/4.png)
+
+Dans ce diagramme de classes, vous avez une classe abstraite `Sujet` qui représente le sujet observé. Cette classe a des méthodes pour ajouter, supprimer et notifier des observateurs. L'interface `Observateur` déclare la méthode abstraite `actualiser()` que les observateurs concrets (dans cet exemple, `ObservateurConcretA` et `ObservateurConcretB`) implémentent.
+
+La classe `Client` est présentée ici comme une classe qui utilise le sujet (`Sujet`) et les observateurs concrets (`ObservateurConcretA` et `ObservateurConcretB`).
+
+Notez que l'utilisation du patron de conception Observateur permet à un objet (le sujet) de notifier tous ses observateurs lorsqu'un changement d'état se produit, sans que le sujet ait besoin de connaître les détails de chaque observateur. Chaque observateur réagit à la notification en mettant à jour son état, selon ses propres règles.
+
+
+
+## Question 11 :
+
+
+
+
+
+
