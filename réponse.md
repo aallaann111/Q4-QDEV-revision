@@ -655,6 +655,143 @@ Maintenant, chaque classe concrète (observateur) implémente l'interface `DataO
 
 
 
+## Question 13 :
+
+Pour répondre à la question 13, vous pouvez ajouter une méthode `addDataObserver(DataObserver observer)` à la classe `DataCompression`. Cette méthode permettra d'ajouter des observateurs spécifiques pour chaque type de données. Voici comment vous pourriez implémenter cela :
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+public class DataCompression {
+    private float quality = 0.5f;
+    private List<DataObserver> observers = new ArrayList<>();
+
+    public void addDataObserver(DataObserver observer) {
+        observers.add(observer);
+    }
+
+    public String compressData(Data data) {
+        String result = "";
+
+        if (data instanceof ImageData) {
+            result = compressImageData((ImageData) data);
+            notifyObservers(result);
+        } else if (data instanceof AudioData) {
+            result = compressAudioData((AudioData) data);
+            notifyObservers(result);
+        } else if (data instanceof VideoData) {
+            result = compressVideoData((VideoData) data);
+            notifyObservers(result);
+        }
+
+        return result;
+    }
+
+    private void notifyObservers(String fileName) {
+        for (DataObserver observer : observers) {
+            observer.update(fileName);
+        }
+    }
+
+    // Reste du code...
+
+    // Méthodes de compression et de mise à jour ici...
+
+    // Reste du code...
+}
+```
+
+Avec cette modification, vous pouvez maintenant ajouter des observateurs spécifiques pour chaque type de données en utilisant la méthode `addDataObserver`. Ces observateurs seront notifiés chaque fois qu'une nouvelle donnée est compressée, permettant à chaque observateur de réagir de manière appropriée.
+
+
+
+## Question 14 :
+
+Il semble y avoir une confusion dans vos messages précédents, car la solution antipattern fournie ne semble pas contenir le code de l'application principale. Cependant, si vous avez déjà l'application principale dans votre code, vous pouvez la tester en ajoutant des observateurs et en compressant des données. Voici comment cela pourrait ressembler :
+
+```java
+public class App {
+
+    public static void main(String[] args) {
+        // ...
+
+        // Création du DataCompression
+        DataCompression dataCompression = new DataCompression();
+
+        // Ajout des observateurs
+        dataCompression.addDataObserver(new ImageObserver());
+        dataCompression.addDataObserver(new AudioObserver());
+        dataCompression.addDataObserver(new VideoObserver());
+
+        // Traitement des données avec la stratégie de traitement appropriée
+        String imageResult, soundResult;
+        String videoResult = "";
+
+        for (int i = 0; i < 10; i++) {
+            imageResult = dataCompression.compressData(imageList.get(i));
+            soundResult = dataCompression.compressData(audioList.get(i));
+            if (i < 5)
+                videoResult = dataCompression.compressData(videoList.get(i));
+
+            // Vérification du résultat du traitement
+            System.out.println("Résultat du traitement de l'image : " + imageResult);
+            System.out.println("Résultat du traitement du son : " + soundResult);
+            if (i < 5)
+                System.out.println("Résultat du traitement de la vidéo : " + videoResult);
+        }
+    }
+}
+```
+
+Assurez-vous d'avoir ajouté les observateurs appropriés avec `addDataObserver` avant de commencer le traitement des données. Cela devrait permettre à chaque observateur d'être notifié lorsque des données sont compressées.
+
+
+
+## Question 15 :
+
+Une extension possible pour l'implémentation du pattern Observateur pourrait être l'ajout d'une fonctionnalité de désabonnement. Actuellement, une fois qu'un observateur est ajouté avec la méthode `addDataObserver`, il restera inscrit pour recevoir des mises à jour indéfiniment. Ajouter la possibilité de se désabonner peut être utile dans certaines situations où un observateur ne souhaite plus recevoir de notifications.
+
+Voici comment vous pourriez ajouter cette fonctionnalité :
+
+1. Modifiez l'interface `DataObserver` pour inclure une méthode `unsubscribe()` :
+
+```java
+public interface DataObserver {
+    void update(String fileName);
+    void unsubscribe();
+}
+```
+
+2. Dans chaque classe concrète d'observateur (`ImageObserver`, `AudioObserver`, `VideoObserver`), implémentez la méthode `unsubscribe` en supprimant l'observateur de la liste dans la classe `DataCompression` :
+
+```java
+public class ImageObserver implements DataObserver {
+    // ...
+
+    @Override
+    public void unsubscribe() {
+        dataCompression.removeDataObserver(this);
+    }
+}
+```
+
+3. Ajoutez une méthode `removeDataObserver` dans la classe `DataCompression` pour permettre aux observateurs de se désabonner :
+
+```java
+public class DataCompression {
+    // ...
+
+    public void removeDataObserver(DataObserver observer) {
+        observers.remove(observer);
+    }
+
+    // ...
+}
+```
+
+Avec cette extension, un observateur peut appeler `unsubscribe` pour se désabonner et ne plus recevoir de notifications. Cela rend l'implémentation plus flexible et permet aux observateurs de contrôler eux-mêmes la durée de leur abonnement.
+
 
 
 
